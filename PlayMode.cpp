@@ -93,8 +93,9 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			return true;
 		}
 		else if (evt.key.keysym.sym == SDLK_r) {
-			level = levels[level_index];
 			player_at = level.starting_pos;
+			box_positions.clear();
+			box_velocities.clear();
 			for (uint32_t x = 0; x < 16; ++x) {
 				for (uint32_t y = 0; y < 15; ++y) {
 					if (level.boxes[x][y]) {
