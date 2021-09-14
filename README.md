@@ -3,7 +3,7 @@
 Author: Anne He
 
 Design: A simple sokoban where you play as a cat and knock objects off platforms. Modded to use 16 bit artwork.
-Note that it does not currently work, but it does draw some things.
+Note that it does not currently work, but it does draw some things and has a cute cat bopping animation. So in its current state it's more of a cat-exploring-abstract-world game.
 
 Screen Shot:
 
@@ -24,8 +24,11 @@ How To Play:
 Arrow keys to move. Press "R" to reset the level. Run into blocks to push them.
 
 Sources: Referenced several past projects for ideas on asset pipeline.
+
 https://github.com/lassyla/game1
+
 https://github.com/xinyis991105/15-466-f20-base1
+
 And referenced F21 and F19 base code.
 
 This game was built with [NEST](NEST.md).
