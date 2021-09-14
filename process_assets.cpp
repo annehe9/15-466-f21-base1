@@ -27,11 +27,14 @@ int main(int argc, char** argv) {
     std::cout << "processing assets...\n";
 
     const uint32_t num_levels = 4;
-    const uint32_t num_sprites = 5;
-    std::string tile_files[num_sprites] = { "../tiles/Boxes.png", "../tiles/Cats.png", "../tiles/GreenBlocks.png", "../tiles/Ladder.png", "../tiles/Spikes.png"};
+    const uint32_t num_sprites = 11;
+    std::string tile_files[num_sprites] = { "../tiles/Cat1.png", "../tiles/Cat2.png", 
+                                            "../tiles/TopBlock.png", "../tiles/Block.png", 
+                                            "../tiles/Box1.png", "../tiles/Box2.png", "../tiles/Box3.png",
+                                            "../tiles/Ladder.png", "../tiles/Spikes1.png", "../tiles/Spikes2.png", "../tiles/Spikes3.png"};
     std::string level_files = "../levels/";
-    //png sizes
-    glm::uvec2 sizes[5] = { glm::uvec2(48,16), glm::uvec2(16,32), glm::uvec2(16,32), glm::uvec2(16,16), glm::uvec2(48,16) };
+    //png size
+    glm::uvec2 size = glm::uvec2(16, 16);
 
     std::vector<PPU466::Palette> palette_table;
     std::vector<PPU466::Tile> tile_table;
@@ -44,17 +47,15 @@ int main(int argc, char** argv) {
 
         std::cout << "loading " << tile_files[i] << "\n";
         std::vector<glm::u8vec4> data;
-        load_png(data_path(tile_files[i]), &sizes[i], &data, UpperLeftOrigin);
+        load_png(data_path(tile_files[i]), &size, &data, LowerLeftOrigin);
 
-        assert(sizes[i].x % 8 == 0);
-        assert((sizes[i].y) % 8 == 0);
-        assert(sizes[i].x * sizes[i].y <= data.size());
+        assert(size.x * size.y <= data.size());
 
         //loop through tiles
         PPU466::Palette palette;
         PPU466::Tile tile;
-        for (uint32_t tileX = 0; tileX < sizes[i].x; tileX+=8) {
-            for (uint32_t tileY = 0; tileY < sizes[i].y; tileY+=8) {
+        for (uint32_t tileY = 0; tileY < size.y; tileY+=8) {
+            for (uint32_t tileX = 0; tileX < size.x; tileX+=8) {
 
                 std::cout << "getting palette of (" << tileX << ", " << tileY << ")" << "\n";
                 //get palette of tile
@@ -62,7 +63,8 @@ int main(int argc, char** argv) {
                 uint32_t num_colors = 0;
                 for (uint8_t pixelY = 0; pixelY < 8; ++pixelY) {
                     for (uint8_t pixelX = 0; pixelX < 8; ++pixelX) {
-                        glm::u8vec4 curr_color = data[(tileX + pixelX) + sizes[i].x * (tileY + 8 - pixelY)];
+                        glm::u8vec4 curr_color = data[(tileX + pixelX) + size.x * (tileY + pixelY)];
+                        //skip blank tiles bc they may have different values
                         if (curr_color[3] != 0xff || (curr_color[0] == 0xff && curr_color[1] == 0xff && curr_color[2] == 0xff)) continue;
                         bool found = false;
                         for (uint8_t col = 0; col < 4; ++col) {
@@ -116,16 +118,28 @@ int main(int argc, char** argv) {
 
                 //get tile information
                 palette = palette_table[palette_index];
+                std::cout << "colors: ";
+                for (int i = 0; i < 4; ++i) {
+                    std::cout << "(" << (int)palette[i][0] << ", " << (int)palette[i][1] << ", " << (int)palette[i][2] << ", " << (int)palette[i][3] << ")\n";
+                }
                 memset(&tile.bit0, 0, 8);
                 memset(&tile.bit1, 0, 8);
                 for (uint32_t pixelY = 0; pixelY < 8; ++pixelY) {
                     for (uint32_t pixelX = 0; pixelX < 8; ++pixelX) {
+                        bool found = false;
                         for (uint32_t p = 0; p < 4; p++) {
-                            if (data[(tileX + pixelX) + sizes[i].x * (tileY + 8 + pixelY)] == palette[p]) {
+                            if (data[(tileX + pixelX) + size.x * (tileY + pixelY)] == palette[p] ||
+                                (data[(tileX + pixelX) + size.x * (tileY + pixelY)][3] == palette[p][3] && palette[p][3] == 0x00)) {
+                                found = true;
                                 tile.bit0[pixelY] = tile.bit0[pixelY] | ((p & 1) << pixelX);
-                                tile.bit1[pixelY] = tile.bit1[pixelY] | (((p & 2) << (pixelX)) >> 1);
+                                tile.bit1[pixelY] = tile.bit1[pixelY] | (((p >> 1) & 1) << pixelX);//(((p & 2) << (pixelX)) >> 1);
                             }
                         }
+                        if (!found) {
+                            glm::u8vec4 curr_color = data[(tileX + pixelX) + size.x * (tileY + pixelY)];
+                            std::cout << "color: (" << (int)curr_color[0] << ", " << (int)curr_color[1] << ", " << (int)curr_color[2] << ", " << (int)curr_color[3] << ")\n";
+                        }
+                        assert(found);
                     }
                 }
                 tile_table.push_back(tile);
@@ -163,13 +177,14 @@ int main(int argc, char** argv) {
                 }
                 else if (color[0] == 0xff && color[1] == 0x00 && color[2] == 0xff) { //purple
                     level.boxes[x][y] = true;
+                    std::cout << "found boxes";
                 }
             }
         }
         levels.push_back(level);
     }
 
-    std::ofstream out(data_path("../tiles.bin"), std::ios::binary);
+    std::ofstream out(data_path("../tilebin"), std::ios::binary);
     write_chunk("tile", tile_table, &out);
     write_chunk("pale", palette_table, &out);
     write_chunk("tmap", tile_to_palette_map, &out);

@@ -24,13 +24,16 @@ struct PlayMode : Mode {
 		uint8_t pressed = 0;
 	} left, right, down, up;
 
-	//some weird background animation:
-	float background_fade = 0.0f;
+	//animation timer:
+	bool animate = false;
+	float animate_timer = 0.0f;
 
 	//player position:
 	glm::vec2 player_at = glm::vec2(0.0f);
 	glm::vec2 player_velocity = glm::vec2(0.0f);
 	float gravity = -5.0f;
+	//bool climb = false;
+	bool grounded = true; //also use this for the ladder
 
 	//boxes
 	std::vector<glm::vec2> box_positions;
@@ -42,6 +45,6 @@ struct PlayMode : Mode {
 	Level level; //track current level
 
 	//----- drawing handled by PPU466 -----
-
+	std::vector<int> tile_to_palette_map;
 	PPU466 ppu;
 };
