@@ -3,7 +3,7 @@
 Author: Anne He
 
 Design: A simple sokoban where you play as a cat and knock objects off platforms. Modded to use 16 bit artwork.
-Note that it does not currently work, but it does draw some things.
+Note that it does not currently work, but it does draw some things and has a cute cat bopping animation.
 
 Screen Shot:
 
