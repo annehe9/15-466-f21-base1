@@ -24,8 +24,11 @@ How To Play:
 Arrow keys to move. Press "R" to reset the level. Run into blocks to push them.
 
 Sources: Referenced several past projects for ideas on asset pipeline.
+
 https://github.com/lassyla/game1
+
 https://github.com/xinyis991105/15-466-f20-base1
+
 And referenced F21 and F19 base code.
 
 This game was built with [NEST](NEST.md).
