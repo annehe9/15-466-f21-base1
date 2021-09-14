@@ -1,5 +1,6 @@
 #include "PPU466.hpp"
 #include "Mode.hpp"
+#include "Level.hpp"
 
 #include <glm/glm.hpp>
 
@@ -28,6 +29,17 @@ struct PlayMode : Mode {
 
 	//player position:
 	glm::vec2 player_at = glm::vec2(0.0f);
+	glm::vec2 player_velocity = glm::vec2(0.0f);
+	float gravity = -5.0f;
+
+	//boxes
+	std::vector<glm::vec2> box_positions;
+	std::vector<glm::vec2> box_velocities;
+	
+	//levels
+	std::vector<Level> levels;
+	int level_index = 1;
+	Level level; //track current level
 
 	//----- drawing handled by PPU466 -----
 

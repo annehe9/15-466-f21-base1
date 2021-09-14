@@ -1,8 +1,8 @@
-# (TODO: your game's title)
+# Nekoban
 
-Author: (TODO: your name)
+Author: Anne He
 
-Design: (TODO: In two sentences or fewer, describe what is new and interesting about your game.)
+Design: A simple sokoban where you play as a cat and knock objects off platforms. Modded to use 16 bit artwork.
 
 Screen Shot:
 
@@ -10,13 +10,19 @@ Screen Shot:
 
 How Your Asset Pipeline Works:
 
-(TODO: describe the steps in your asset pipeline, from source files to tiles/backgrounds/whatever you upload to the PPU466.)
+Each tile or sprite is a separate 16x16png, that gets loaded into the asset pipeline. The asset pipeline loads the png and gets the image data.
+Each image is processed and broken down into 8x8 tiles. Each tile is processed for its palette, and the palette is checked against existing palettes.
+If it is a new palette we add it. We map the tile to the palette based on index. We process the tile layout using the palette. 
+
+Levels are designed as 16x15 pngs, with different game elements being different color pixels. They are loaded into the pipeline and a binary matrix flags the presence of different blocks in the level.
+
+We write all the information we have gathered into a binary file using write_chunk. This information can then be read using read_chunk in the game mode.
 
 How To Play:
 
-(TODO: describe the controls and (if needed) goals/strategy.)
+Arrow keys to move. Press "R" to reset the level.
 
-Sources: (TODO: list a source URL for any assets you did not create yourself. Make sure you have a license for the asset.)
+Sources: Referenced several past projects for ideas on asset pipeline.
 
 This game was built with [NEST](NEST.md).
 

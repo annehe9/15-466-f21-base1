@@ -125,8 +125,16 @@ GAME_NAMES =
 	GL
 	;
 
+PROCESS_ASSETS_NAMES = 
+	process_assets
+	data_path
+	;
+
 LOCATE_TARGET = objs ; #put objects in 'objs' directory
-Objects $(GAME_NAMES:S=.cpp) ;
+Objects $(GAME_NAMES:S=.cpp) $(PROCESS_ASSETS_NAMES:S=.cpp) ;
 
 LOCATE_TARGET = dist ; #put main in 'dist' directory
 MainFromObjects game : $(GAME_NAMES:S=$(SUFOBJ)) ;
+
+LOCATE_TARGET = utils ; #put process_assets utility in 'utils' directory:
+MainFromObjects process_assets : $(PROCESS_ASSETS_NAMES:S=$(SUFOBJ)) load_save_png$(SUFOBJ) ;
